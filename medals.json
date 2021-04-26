@@ -93712,6 +93712,7 @@
     "Ability": {
       "Name": "Raging Darkness +7",
       "Text": "Deals 3 hits. 1 \"turn\": S-Medal STR +12000, self [↑ STR, R- & S-STR 15], targets [↓ DEF, R- & S-DEF 15], SP ATK B +220%. Count ±0. \"Damage+\": Higher HP. Pierces Defense Boost 30%.",
+      "Condition": "HigherHP",
       "SelfBuffs": {
         "BuffGA": {
           "BuffCount": 15,
