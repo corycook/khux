@@ -6,7 +6,7 @@
   "scripts": {
     "local": "parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url khux/",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "author": "corycook",

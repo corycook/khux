@@ -36,8 +36,8 @@ export function MedalTable() {
             flex: 0,
             renderCell: (params: GridCellParams) => (
               <Tooltip placement="right" arrow classes={{ tooltip: classes.noMaxWidth }}
-                title={<img src={`/images/medals/${params.value}`} width="300" />}>
-                <img src={`/images/medals/${params.value}`} width="75" />
+                title={<img src={`images/medals/${params.value}`} width="300" />}>
+                <img src={`images/medals/${params.value}`} width="75" />
               </Tooltip>
             ),
             sortable: false,
