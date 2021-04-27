@@ -29,6 +29,10 @@
       {
         "staticPath": "v1/images/medals/en",
         "staticOutDir": "images/medals"
+      },
+      {
+        "staticPath": "v1/images/ui",
+        "staticOutDir": "images/icons"
       }
     ]
   }
