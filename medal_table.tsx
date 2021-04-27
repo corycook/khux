@@ -121,17 +121,6 @@ export function MedalTable() {
   );
 }
 
-function DirectionCell({ value }) {
-  switch (value) {
-    case 'Upright':
-      return <img src="images/icons/genUp.png" height="100" />;
-    case 'Reversed':
-      return <img src="images/icons/genRev.png" height="100" />;
-    default:
-      return <></>;
-  }
-}
-
 function overflowCell(params: GridCellParams) {
   return (
     <Tooltip
