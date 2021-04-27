@@ -6,6 +6,7 @@
   "scripts": {
     "local": "parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build index.html",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "author": "corycook",
@@ -25,8 +26,8 @@
   "staticFiles": {
     "staticPath": [
       {
-        "staticPath": "v1/images",
-        "staticOutDir": "images"
+        "staticPath": "v1/images/medals/en",
+        "staticOutDir": "images/medals"
       }
     ]
   }
