@@ -30,7 +30,6 @@ export function MedalTable() {
           pageSize={50}
           sortModel={[{ field: 'id', sort: 'desc' }]}
           rows={rows}
-          autoHeight
           columns={[
             {
               field: 'MedalImage',
