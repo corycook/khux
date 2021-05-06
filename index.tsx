@@ -24,7 +24,7 @@ function Main() {
       </Typography>
       <MedalTable />
       <Typography variant="body1" gutterBottom>
-        <a href="./medals.json">Raw data</a> is from <ContentLink>https://github.com/roboloid/khux</ContentLink>
+        <a href="./medals.json">Raw data</a> is originally from <ContentLink>https://github.com/roboloid/khux</ContentLink>
       </Typography>
     </Container>
   );
