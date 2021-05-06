@@ -16,6 +16,10 @@ function escapeRegExp(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
 
+function roundValue(value: number, precision = 2) {
+  return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+}
+
 function getAbilityCondition(medal) {
   return 'Condition' in medal.Ability ? medal.Ability.Condition : undefined;
 }
@@ -27,7 +31,7 @@ const medals = Array.from({ ...medalData, length: 2100 })
     id: medal.AlbumNum,
     abilityText: medal.Ability?.Text,
     abilityCondition: getAbilityCondition(medal),
-    damagePotential: computeDamagePotential(medal),
+    damagePotential: roundValue(computeDamagePotential(medal)),
     multiAll: 'Multi' in medal ? medal.Multi : (
       'LowMulti' in medal
         ? `${medal.LowMulti} - ${medal.HighMulti} (${getAbilityCondition(medal)})`
