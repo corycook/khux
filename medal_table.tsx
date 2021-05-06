@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DataGrid, GridCellParams, GridValueGetterParams } from '@material-ui/data-grid';
 import * as medals from './medals.json';
 import { Tooltip, createStyles, makeStyles, Theme } from '@material-ui/core';
+import { computeDamagePotential } from './computations';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,12 +13,13 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const rows = Array.from({ ...medals, length: 2100 })
-  .filter(item => !!item)
-  .map(item => ({
-    ...item,
-    id: item.AlbumNum,
-    abilityText: item.Ability?.Text,
-    abilityCondition: 'Condition' in item.Ability ? item.Ability.Condition : undefined,
+  .filter(medal => !!medal)
+  .map(medal => ({
+    ...medal,
+    id: medal.AlbumNum,
+    abilityText: medal.Ability?.Text,
+    abilityCondition: 'Condition' in medal.Ability ? medal.Ability.Condition : undefined,
+    damagePotential: computeDamagePotential(medal),
   }));
 
 export function MedalTable() {
@@ -28,7 +30,7 @@ export function MedalTable() {
       <div style={{ flexGrow: 1 }}>
         <DataGrid
           pageSize={50}
-          sortModel={[{ field: 'AlbumNum', sort: 'desc' }]}
+          sortModel={[{ field: 'damagePotential', sort: 'desc' }]}
           density="comfortable"
           disableColumnFilter={false}
           rows={rows}
@@ -58,8 +60,8 @@ export function MedalTable() {
                   <div style={{
                     alignItems: 'center',
                     backgroundSize: '100px',
-                    backgroundImage: params.value == 'Upright' 
-                      ? 'url("images/icons/genUp.png")' 
+                    backgroundImage: params.value == 'Upright'
+                      ? 'url("images/icons/genUp.png")'
                       : 'url("images/icons/genRev.png")',
                     backgroundPosition: 'center',
                     display: 'flex',
@@ -90,7 +92,8 @@ export function MedalTable() {
               ),
               type: 'number',
             },
-            { field: 'STR', flex: 0, type: 'number' },
+            { field: 'STR', flex: 0, type: 'number', hide: true },
+            { field: 'damagePotential', headerName: 'Damage Potential Score', flex: 1, type: 'number' },
             { field: 'DEF', flex: 0, type: 'number', hide: true },
             { field: 'Multi', headerName: 'Multiplier', flex: 0, type: 'number', hide: true },
             { field: 'LowMulti', headerName: 'Low Multiplier', flex: 0, type: 'number', hide: true },
@@ -103,8 +106,9 @@ export function MedalTable() {
               renderCell: overflowCell,
               valueGetter: (params: GridValueGetterParams) => (params.getValue('Multi')
                 || `${params.getValue('LowMulti')} - ${params.getValue('HighMulti')} (${params.getValue('abilityCondition')})`),
+              hide: true,
             },
-            { field: 'Gauge', flex: 0, type: 'number' },
+            { field: 'Gauge', flex: 0, type: 'number', hide: true },
             {
               field: 'Target',
               flex: 0,

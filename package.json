@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "local": "parcel index.html",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "test": "jest",
     "build": "parcel build index.html --public-url=./",
     "clean": "rm dist -rf",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
@@ -20,8 +20,12 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^26.6.3",
     "parcel-plugin-static-files-copy": "^2.6.0",
     "push-dir": "^0.4.1",
+    "ts-jest": "^26.5.5",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   },
   "staticFiles": {
