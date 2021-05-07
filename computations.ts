@@ -3,40 +3,54 @@ import * as medalData from './medals.json';
 const medals = Array.from({ ...medalData, length: 2100 });
 type Medal = typeof medals[number];
 type Ability = Medal['Ability'];
-type SelfBuffs = Extract<Ability, { SelfBuffs: any }>['SelfBuffs'];
+type AbilitySelfBuffs = Extract<Ability, { SelfBuffs: any }>['SelfBuffs'];
+
+type Supernova = Extract<Medal, { Supernova: any }>['Supernova'];
+type SupernovaSelfBuffs = Extract<Supernova, { SelfBuffs: any }>['SelfBuffs'];
+
+type SelfBuffs = AbilitySelfBuffs | SupernovaSelfBuffs;
 
 export function computeDamagePotential(
   medal: Medal, options = {
     includeGeneralAttackUp: false,
     includeAttributeAttackUp: false,
+    includeSupernova: false,
   }) {
   const strength = 'STR' in medal ? medal.STR : 0;
   const specialAttack = 'Multi' in medal ? medal.Multi : 1;
   const guilt = 'Guilt' in medal ? (1 + (medal.Guilt / 100)) : 1;
 
-  const strengthPlus = getStrengthPlus(medal);
-  const generalAttackUp = options.includeGeneralAttackUp ? getGeneralAttackUp(medal) : 1;
-  const attributeAttackUp = options.includeAttributeAttackUp ? getAttributeAttackUp(medal) : 1;
-
   const selfBuffs = getSelfBuffs(medal);
-  const guiltBuff = 'GuiltBuff' in selfBuffs ? (selfBuffs.GuiltBuff / 100) : 0;
-  const attributeBoost = 'AttributeAlways' in selfBuffs ? 1.5 : 1;
+  const supernova = 'Supernova' in medal ? medal.Supernova : null;
 
-  return (strength + strengthPlus)
+  const strengthPlus = selfBuffs && getStrengthPlus(selfBuffs);
+  const generalAttackUp = options.includeGeneralAttackUp && selfBuffs
+    ? getGeneralAttackUp(selfBuffs) : 1;
+  const attributeAttackUp = options.includeAttributeAttackUp && selfBuffs
+    ? getAttributeAttackUpMultiplier(medal, selfBuffs) : 1;
+
+  const guiltBuff = selfBuffs && 'GuiltBuff' in selfBuffs ? (selfBuffs.GuiltBuff / 100) : 0;
+  const attributeBoost = selfBuffs && 'AttributeAlways' in selfBuffs ? 1.5 : 1;
+
+  const supernovaMultiplier = options.includeSupernova && supernova && 'Multi' in supernova
+    ? supernova.Multi : 1;
+  const supernovaStrengthPlus = options.includeSupernova && supernova && 'SelfBuffs' in supernova
+    ? getStrengthPlus(supernova.SelfBuffs) : 0;
+
+  return (strength + strengthPlus + supernovaStrengthPlus)
     * specialAttack
+    * supernovaMultiplier
     * (guilt + guiltBuff)
     * generalAttackUp
     * attributeAttackUp
     * attributeBoost;
 }
 
-function getStrengthPlus(medal: Medal): number {
-  const selfBuffs = getSelfBuffs(medal);
+function getStrengthPlus(selfBuffs: SelfBuffs): number {
   return 'STRPlus' in selfBuffs ? selfBuffs.STRPlus.Amount : 0;
 }
 
-function getGeneralAttackUp(medal: Medal): number {
-  const selfBuffs = getSelfBuffs(medal);
+function getGeneralAttackUp(selfBuffs: SelfBuffs): number {
   if ('BuffGA' in selfBuffs) {
     return {
       1: 1.2,
@@ -79,8 +93,7 @@ const attributeBuffTable = {
   17: 3.7
 };
 
-function getAttributeAttackUp(medal: Medal): number {
-  const selfBuffs = getSelfBuffs(medal);
+function getAttributeAttackUpMultiplier(medal: Medal, selfBuffs: SelfBuffs): number {
   const buffs = ['BuffUA', 'BuffRA', 'BuffPA', 'BuffSA', 'BuffMA']
     .map((buff) => buff in selfBuffs
       ? attributeBuffTable[selfBuffs[buff].BuffCount]
@@ -99,6 +112,6 @@ function sum(accumulator: number, value: number): number {
   return accumulator + value;
 }
 
-function getSelfBuffs(medal: Medal): SelfBuffs | {} {
-  return 'SelfBuffs' in medal.Ability ? medal.Ability.SelfBuffs : {};
+function getSelfBuffs(medal: Medal): SelfBuffs {
+  return 'SelfBuffs' in medal.Ability ? medal.Ability.SelfBuffs : null;
 }

@@ -20,7 +20,7 @@ function Main() {
         contribution that a medal could provide to a build.
       </Typography>
       <Typography gutterBottom>
-        [Damage Potential] = ([Strength] + [Strength Boost]) x [Special Attack] x ([Guilt] + [Guilt Buff]) x [Ignore Attribute Boost]
+        [Damage Potential] = ([Strength] + [Strength Boost] + [Supernova (SN) Strength Boost]) x [Special Attack] x [SN] x ([Guilt] + [Guilt Buff]) x [Ignore Attribute Boost]
       </Typography>
       <MedalTable />
       <Typography variant="body1" gutterBottom>

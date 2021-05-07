@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColumns, GridRowId, GridValueGetterParams } from '@material-ui/data-grid';
+import { DataGrid, GridCellParams, GridColumns, GridRowId } from '@material-ui/data-grid';
 import * as medalData from './medals.json';
 import { Tooltip, createStyles, makeStyles, Theme, TextField } from '@material-ui/core';
 import { computeDamagePotential } from './computations';
+import { debounceOnChange } from './debounceOnChange';
+
+const DebouncedTextField = debounceOnChange(TextField);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,7 +32,7 @@ const medals = Array.from({ ...medalData, length: 2100 })
   .map(medal => ({
     ...medal,
     id: medal.AlbumNum,
-    abilityText: medal.Ability?.Text,
+    abilityText: medal.Ability.Text,
     abilityCondition: getAbilityCondition(medal),
     damagePotential: roundValue(computeDamagePotential(medal)),
     multiAll: 'Multi' in medal ? medal.Multi : (
@@ -37,6 +40,7 @@ const medals = Array.from({ ...medalData, length: 2100 })
         ? `${medal.LowMulti} - ${medal.HighMulti} (${getAbilityCondition(medal)})`
         : ''
     ),
+    supernovaText: 'Supernova' in medal ? medal.Supernova.Text : '',
   }));
 
 export function MedalTable() {
@@ -45,7 +49,7 @@ export function MedalTable() {
 
   const handleSearchChange = (searchString: string) => {
     setSearchTerms(searchString.split(' ').filter(s => !!s && s !== ''));
-  }
+  };
 
   const columns: GridColumns = [
     {
@@ -141,6 +145,18 @@ export function MedalTable() {
         </OverflowCell>
       ),
     },
+    {
+      field: 'supernovaText',
+      headerName: 'Supernova Text',
+      flex: 1,
+      renderCell: params => (
+        <OverflowCell fullText={params.value.toString()}>
+          <HighlightSearchTerms searchTerms={searchTerms} id={params.id}>
+            {params.value.toString()}
+          </HighlightSearchTerms>
+        </OverflowCell>
+      ),
+    },
   ];
   const rows = medals.filter(medal => {
     return searchTerms.every(searchTerm => {
@@ -153,13 +169,13 @@ export function MedalTable() {
 
   return (
     <>
-      <form noValidate autoComplete="off">
-        <TextField
-          label="Search"
-          helperText="Search text from any field (e.g. 'xion upright power')"
-          onChange={e => handleSearchChange(e.target.value)}
-        />
-      </form>
+      <DebouncedTextField
+        label="Search"
+        helperText="Search text from any field (e.g. 'xion upright power')"
+        onChange={e => handleSearchChange(e.target.value)}
+        debounceTimeout={200}
+        variant="outlined"
+      />
       <div style={{ display: 'flex', height: '100%' }}>
         <div style={{ flexGrow: 1 }}>
           <DataGrid
