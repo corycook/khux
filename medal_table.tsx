@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColumns, GridRowId } from '@material-ui/data-grid';
+import { DataGrid, GridCellParams, GridColumns, GridRowId, GridSortModel } from '@material-ui/data-grid';
 import * as medalData from './medals.json';
 import { Tooltip, makeStyles, TextField, Switch, FormGroup, FormControlLabel } from '@material-ui/core';
 import { computeDamagePotential } from './computations';
@@ -200,6 +200,7 @@ const useStyles = makeStyles(() => ({
 export function MedalTable() {
   const classes = useStyles();
   const [searchTerms, setSearchTerms] = React.useState([]);
+  const [sortModel, setSortModel] = React.useState<GridSortModel>([{ field: 'damagePotential', sort: 'desc' }])
   const [selectedIds, setSelectedIds] = useStickyState([], 'selectedIds');
   const [hideUnselected, setHideUnselected] = React.useState(false);
 
@@ -235,7 +236,8 @@ export function MedalTable() {
         <div style={{ flexGrow: 1 }}>
           <DataGrid
             pageSize={50}
-            sortModel={[{ field: 'damagePotential', sort: 'desc' }]}
+            sortModel={sortModel}
+            onSortModelChange={params => setSortModel(params.sortModel)}
             checkboxSelection
             onSelectionModelChange={handleSelectionChange}
             selectionModel={selectedIds}
