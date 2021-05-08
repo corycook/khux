@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColumns, GridRowId, GridSelectionModel } from '@material-ui/data-grid';
+import { DataGrid, GridCellParams, GridColumns, GridRowId } from '@material-ui/data-grid';
 import * as medalData from './medals.json';
-import { Tooltip, createStyles, makeStyles, Theme, TextField, Checkbox, Switch, FormGroup, FormControlLabel, FormControl } from '@material-ui/core';
+import { Tooltip, makeStyles, TextField, Switch, FormGroup, FormControlLabel } from '@material-ui/core';
 import { computeDamagePotential } from './computations';
 import { debounceOnChange } from './debounce';
 import { useStickyState } from './useStickyState';
