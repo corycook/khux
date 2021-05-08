@@ -11,23 +11,13 @@ export function debounceOnChange<P extends { onChange?: React.ChangeEventHandler
       return <Component {...props as P} />;
     }
     const [id, setId] = React.useState<ReturnType<typeof setTimeout>>();
-
+    const resetId = () => id && clearTimeout(id);
     const handleOnChange = (event: React.ChangeEvent<Element>) => {
-      if (id) {
-        clearTimeout(id);
-      }
-      setId(setTimeout(() => {
-        onChange(event);
-      }, debounceTimeout));
+      resetId();
+      setId(setTimeout(() => onChange(event), debounceTimeout));
     };
 
-    React.useEffect(() => {
-      return () => {
-        if (id) {
-          clearTimeout(id);
-        }
-      };
-    });
+    React.useEffect(() => resetId);
 
     return <Component onChange={handleOnChange} {...props as P} />
   };

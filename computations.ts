@@ -11,11 +11,11 @@ type SupernovaSelfBuffs = Extract<Supernova, { SelfBuffs: any }>['SelfBuffs'];
 type SelfBuffs = AbilitySelfBuffs | SupernovaSelfBuffs;
 
 export function computeDamagePotential(
-  medal: Medal, options = {
-    includeGeneralAttackUp: false,
-    includeAttributeAttackUp: false,
-    includeSupernova: false,
-  }) {
+  medal: Medal, options: {
+    includeGeneralAttackUp?: boolean,
+    includeAttributeAttackUp?: boolean,
+    includeSupernova?: boolean,
+  } = {}) {
   const strength = 'STR' in medal ? medal.STR : 0;
   const specialAttack = 'Multi' in medal ? medal.Multi : 1;
   const guilt = 'Guilt' in medal ? (1 + (medal.Guilt / 100)) : 1;
