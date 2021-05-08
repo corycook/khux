@@ -52,7 +52,7 @@ const medals = Array.from({ ...medalData, length: 2100 })
   .filter(medal => !!medal)
   .map(medal => ({
     ...medal,
-    id: medal.AlbumNum,
+    id: medal.ID,
     abilityText: medal.Ability.Text,
     abilityCondition: getAbilityCondition(medal),
     damagePotential: roundValue(computeDamagePotential(medal, { includeSupernova: true })),
@@ -215,7 +215,7 @@ export function MedalTable() {
     })
     .map(medal => ({
       ...medal,
-      isSelected: selectedIds.includes(medal.AlbumNum),
+      isSelected: selectedIds.includes(medal.id),
     }))
     .filter(medal => !hideUnselected || medal.isSelected);
 
@@ -260,7 +260,7 @@ export function MedalTable() {
             onSortModelChange={params => setSortModel(params.sortModel)}
             checkboxSelection
             onRowSelected={handleRowSelected}
-            selectionModel={rows.filter(row => row.isSelected).map(row => row.AlbumNum)}
+            selectionModel={rows.filter(row => row.isSelected).map(row => row.id)}
             density="comfortable"
             disableColumnFilter={false}
             rows={rows}
