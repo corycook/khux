@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColumns, GridRowId, GridSortModel } from '@material-ui/data-grid';
+import { DataGrid, GridCellParams, GridColumns, GridRowId, GridRowSelectedParams, GridSortModel } from '@material-ui/data-grid';
 import * as medalData from './medals.json';
 import { Tooltip, makeStyles, TextField, Switch, FormGroup, FormControlLabel } from '@material-ui/core';
 import { computeDamagePotential } from './computations';
@@ -213,24 +213,29 @@ export function MedalTable() {
         });
       });
     })
-    .filter(medal => !hideUnselected || selectedIds.includes(medal.AlbumNum));
+    .map(medal => ({
+      ...medal,
+      isSelected: selectedIds.includes(medal.AlbumNum),
+    }))
+    .filter(medal => !hideUnselected || medal.isSelected);
 
   const handleSearchChange = (searchString: string) => {
     setSearchTerms(searchString.split(' ').filter(s => !!s && s !== ''));
   };
 
-  const handleSelectionChange = (newSelection) => {
-    setSelectedIds(previousIds => [
-      // do not remove rows that are filtered out
-      ...previousIds.filter(id => rows.every(row => row.AlbumNum != id)),
-      ...newSelection.selectionModel
-    ]);
+  const handleRowSelected = (params: GridRowSelectedParams) => {
+    setSelectedIds(previousIds => {
+      const selectedMap = previousIds.reduce((ids, id) => ({ ...ids, [id]: true }), {});
+      selectedMap[params.data.id] = params.isSelected;
+      return Object.keys(selectedMap).filter(id => selectedMap[id]).map(Number);
+    });
   };
 
   return (
     <>
       <div className={classes.menuBar}>
         <DebouncedTextField
+          autoFocus
           label="Search"
           helperText="Search text from any field (e.g. 'xion upright power')"
           onChange={e => handleSearchChange(e.target.value)}
@@ -254,8 +259,8 @@ export function MedalTable() {
             sortModel={sortModel}
             onSortModelChange={params => setSortModel(params.sortModel)}
             checkboxSelection
-            onSelectionModelChange={handleSelectionChange}
-            selectionModel={selectedIds}
+            onRowSelected={handleRowSelected}
+            selectionModel={rows.filter(row => row.isSelected).map(row => row.AlbumNum)}
             density="comfortable"
             disableColumnFilter={false}
             rows={rows}
