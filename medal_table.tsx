@@ -204,12 +204,27 @@ export function MedalTable() {
   const [selectedIds, setSelectedIds] = useStickyState([], 'selectedIds');
   const [hideUnselected, setHideUnselected] = React.useState(false);
 
+  const rows = medals
+    .filter(medal => {
+      return searchTerms.every(searchTerm => {
+        return columns.some(column => {
+          const value: string = medal[column.field]?.toString() || '';
+          return value.toLowerCase().includes(searchTerm.toLowerCase());
+        });
+      });
+    })
+    .filter(medal => !hideUnselected || selectedIds.includes(medal.AlbumNum));
+
   const handleSearchChange = (searchString: string) => {
     setSearchTerms(searchString.split(' ').filter(s => !!s && s !== ''));
   };
 
   const handleSelectionChange = (newSelection) => {
-    setSelectedIds(newSelection.selectionModel);
+    setSelectedIds(previousIds => [
+      // do not remove rows that are filtered out
+      ...previousIds.filter(id => rows.every(row => row.AlbumNum != id)),
+      ...newSelection.selectionModel
+    ]);
   };
 
   return (
@@ -243,17 +258,7 @@ export function MedalTable() {
             selectionModel={selectedIds}
             density="comfortable"
             disableColumnFilter={false}
-            rows={
-              medals
-                .filter(medal => {
-                  return searchTerms.every(searchTerm => {
-                    return columns.some(column => {
-                      const value: string = medal[column.field]?.toString() || '';
-                      return value.toLowerCase().includes(searchTerm.toLowerCase());
-                    });
-                  });
-                })
-                .filter(medal => !hideUnselected || selectedIds.includes(medal.AlbumNum))}
+            rows={rows}
             columns={columns.map(column => ({
               ...column,
               renderCell: column.renderCell ? column.renderCell : ((params: GridCellParams) => (
